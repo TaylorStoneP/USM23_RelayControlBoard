@@ -1,0 +1,149 @@
+#ifndef INC_CONTROL_H_
+#define INC_CONTROL_H_
+
+#include "stm32_utils.h"
+
+enum ERRORS{
+	ERR_NONE,
+	ERR_RELAY_AIRPOS_ENG,
+	ERR_RELAY_AIRPOS_DISENG,
+	ERR_RELAY_AIRNEG_ENG,
+	ERR_RELAY_AIRNEG_DISENG,
+	ERR_RELAY_PC_ENG,
+	ERR_RELAY_PC_DISENG,
+	ERR_RELAY_PC_ENG_STARTUP,
+	ERR_RELAY_AIRPOS_ENG_STARTUP,
+	ERR_RELAY_AIRNEG_ENG_STARTUP,
+	ERR_PC_ENG_STARTUP,
+	ERR_60V_ENG_STARTUP,
+	ERR_NO_PWR_IMD,
+	ERR_NO_PWR_FAN1,
+	ERR_NO_PWR_FAN2,
+	ERR_NO_PWR_IMD_STARTUP,
+	ERR_NO_PWR_FAN1_STARTUP,
+	ERR_NO_PWR_FAN2_STARTUP,
+	ERR_PC_FAST,
+	ERR_PC_SLOW,
+	ERR_PC_OVERFLOW_1,
+	ERR_PC_OVERFLOW_2,
+	ERR_60V_DISENG,
+	ERR_60V_ENG,
+	ERR_OVERRIDE_DISENG,
+	ERR_STARTUP_REINIT,
+	ERR_STATUS_IDLE_ATTEMPT,
+	ERR_STATUS_PC_CHARGE_ATTEMPT,
+	ERR_STATUS_PC_DISCHARGE_ATTEMPT,
+	ERR_STATUS_CHARGE_ATTEMPT,
+	ERR_STATUS_DISCHARGE_ATTEMPT,
+	ERR_STATUS_OVERRIDE_ATTEMPT,
+	ERR_STATUS_INVALID_ATTEMPT,
+	ERR_STATUS_INVALID_ERROR_USAGE,
+	ERR_PC_DISCHARGE_COMPLETE_INVALID_ATTEMPT,
+	ERR_PC_CHARGE_COMPLETE_INVALID_ATTEMPT,
+	ERR_TS_ENGAGE_DOUBLE_REQUEST,
+	ERR_TS_DISENGAGE_DOUBLE_REQUEST,
+	ERR_DEVCON_CHARGER_LOST,
+	ERR_DEVCON_OVERRIDE_LOST,
+	ERR_RELAY_AIRPOS_ENG_FAIL,
+	ERR_RELAY_AIRPOS_DISENG_FAIL,
+	ERR_RELAY_AIRNEG_ENG_FAIL,
+	ERR_RELAY_AIRNEG_DISENG_FAIL,
+	ERR_RELAY_PC_ENG_FAIL,
+	ERR_RELAY_PC_DISENG_FAIL,
+	ERR_60V_DISENG_CHARGE,
+	ERR_TS_ACTIVE_ONSTART
+};
+
+enum RELAY_FLAG_STATES{
+	RS_PC = BIT1,
+	RS_AIRNEG = BIT2,
+	RS_AIRPOS = BIT3,
+	RS_60V = BIT4
+};
+
+enum STATUS{
+	STATUS_Startup,
+	STATUS_Idle,
+	STATUS_PC_Charge,
+	STATUS_Charge,
+	STATUS_PC_Discharge,
+	STATUS_Discharge,
+	STATUS_Error,
+	STATUS_Override
+};
+
+enum RELAY_IT_IGNORE{
+	RI_PC = BIT1,
+	RI_AIRNEG = BIT2,
+	RI_AIRPOS = BIT3,
+};
+
+typedef enum RELAY_STATE{
+	OPEN = 0,
+	CLOSE = 1
+}RELAY_STATE;
+
+#define RELAY_CHECK_DELAY 200
+#define PRECHARGE_DELAY 1000
+#define PC_TIMER_TYPE htim2
+#define PC_MINIMUM_DURATION 50*10
+#define PC_MAXIMUM_DURATION 4800*10
+#define OVERRIDE_EN True
+#define DEBOUNCE_PERIOD 5
+
+typedef struct RCB_HANDLE{
+	uint8_t ERR_STATE;
+	uint8_t RELAY_STATES;
+	uint8_t RELAY_IT_IGNORE;
+	uint8_t STATUS;
+	uint8_t TS_ACTIVE;
+	uint16_t PC_DURATION;
+	uint8_t DEVCON_CHARGER;
+	uint8_t DEVCON_OVERRIDE;
+}RCB_HANDLE;
+
+extern TIM_HandleTypeDef PC_TIMER_TYPE;
+extern RCB_HANDLE hrcb;
+
+#define ERR(error) hrcb.ERR_STATE = error;Err_Handler();
+
+void Err_Handler();
+
+void Startup();
+
+void Input_Check();
+
+void Relay_AIRPOS_SetState(RELAY_STATE state);
+void Relay_AIRNEG_SetState(RELAY_STATE state);
+void Relay_PC_SetState(RELAY_STATE state);
+
+void Relay_AIRPOS_Check();
+void Relay_AIRNEG_Check();
+void Relay_PC_Check();
+void HV_Check();
+
+void PC_Routine_Charge_Start();
+void PC_Routine_Charge_Complete();
+void PC_Routine_Discharge_Start();
+void PC_Routine_Discharge_Complete();
+void PC_Overflow();
+
+void Kill();
+void Shutdown();
+
+void TS_Request(uint8_t request);
+
+uint8_t Status_Check(uint8_t status);
+uint8_t Status_Set(uint8_t status);
+
+void CAN_Transmit_State();
+
+void Debounce_Power();
+void Debounce_TS();
+void Debounce_PC();
+void Debounce_Relays();
+
+void DevCon_Charger(uint8_t state);
+void DevCon_Override(uint8_t state);
+
+#endif /* INC_CONTROL_H_ */

@@ -1,0 +1,10 @@
+../Core/Src/can_utils.c:10:6:CAN_RX_Handler	8	static
+../Core/Src/can_utils.c:26:6:CAN_UTIL_Transmit	48	static
+../Core/Src/can_utils.c:39:6:CAN_UTIL_SetID	16	static
+../Core/Src/can_utils.c:42:6:CAN_UTIL_SetLength	16	static
+../Core/Src/can_utils.c:46:6:CAN_UTIL_Setup	16	static
+../Core/Src/can_utils.c:51:6:CAN_UTIL_SetByte	16	static
+../Core/Src/can_utils.c:55:6:CAN_UTIL_SetData	16	static
+../Core/Src/can_utils.c:65:9:CAN_UTIL_GetByte	16	static
+../Core/Src/can_utils.c:70:6:HAL_CAN_TxMailbox0CompleteCallback	16	static
+../Core/Src/can_utils.c:74:6:HAL_CAN_RxFifo0MsgPendingCallback	16	static
